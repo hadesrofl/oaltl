@@ -16,7 +16,7 @@
                 <configuration>
                     <sourceDirectory>src/main/java/de/uzl/hsr/oaltl/grammar</sourceDirectory>
                     <outputDirectory>src/main/java/de/uzl/hsr/oaltl/grammar</outputDirectory>
-                    <visitor>true</visitor>
+                    <listener>false</listener>
                 </configuration>
                 <executions>
                     <execution>
