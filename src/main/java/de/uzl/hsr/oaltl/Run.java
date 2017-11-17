@@ -12,19 +12,83 @@ public class Run {
         String input;
         do {
             System.out.println("Please enter your LTL Formular");
-            // String input = "F p U X p";
             input = scanny.nextLine();
             CharStream is = CharStreams.fromString(input);
-            LTLLexer lexer = new LTLLexer(is);
 
-            Token token = lexer.nextToken();
-            while (token.getType() != Token.EOF) {
-                System.out.print("Type:" + TokenIdentifier.getTokenType(token) + ", Text: " + token.getText() + " \n");
-                token = lexer.nextToken();
-            }
+            LTLLexer lexer = new LTLLexer(is);
+            PrintingObjectFactory factory = new PrintingObjectFactory();
+
+            System.out.println(buildObject(factory, lexer, -1).print());
+
             System.out.println("Quit program? (y/n)");
             input = scanny.nextLine();
         } while (input.toLowerCase().compareTo("y") != 0);
         scanny.close();
+    }
+
+    public static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
+
+        T parsedObject = null;
+        Token t = lexer.nextToken();
+
+        while (t.getType() != LTLLexer.EOF) {
+
+            if (t.getType() > level && level != -1 && t.getType() != LTLLexer.VARIABLE && t.getType() != LTLLexer.PROP) {
+                return parsedObject;
+            }
+
+            switch (t.getType()) {
+                case LTLLexer.LPAR:
+                    parsedObject = buildObject(fac, lexer, -1);
+                    t = lexer.nextToken();
+                    break;
+
+                case LTLLexer.RPAR:
+                    return parsedObject;
+
+                case LTLLexer.NEG:
+                    parsedObject = fac.neg(buildObject(fac, lexer, t.getType() + 2));
+                    t = lexer.getToken();
+                    break;
+
+                case LTLLexer.NEXT:
+                    parsedObject = fac.next(buildObject(fac, lexer, t.getType() + 1));
+                    t = lexer.getToken();
+                    break;
+
+                case LTLLexer.FINALLY:
+                    parsedObject = fac.fin(buildObject(fac, lexer, t.getType()));
+                    t = lexer.getToken();
+                    break;
+
+                case LTLLexer.UNTIL:
+                    parsedObject = fac.until(parsedObject, buildObject(fac, lexer, t.getType()));
+                    t = lexer.getToken();
+                    break;
+
+                case LTLLexer.CONJ:
+                    parsedObject = fac.and(parsedObject, buildObject(fac, lexer, t.getType()));
+                    t = lexer.getToken();
+                    break;
+
+                case LTLLexer.DISJ:
+                    parsedObject = fac.or(parsedObject, buildObject(fac, lexer, t.getType()));
+                    t = lexer.getToken();
+                    break;
+
+                case LTLLexer.VARIABLE:
+                    parsedObject = fac.var(t.getText());
+                    t = lexer.nextToken();
+                    break;
+
+                case LTLLexer.PROP:
+                    parsedObject = fac.val(t.getText().equals("TRUE") ? true : false);
+                    t = lexer.nextToken();
+                    break;
+            }
+
+        }
+
+        return parsedObject;
     }
 }
