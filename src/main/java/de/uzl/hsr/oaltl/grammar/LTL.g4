@@ -10,7 +10,7 @@ conj: binary (CONJ binary)*;
 binary: unary (UNTIL unary)*;
 unary: (NEXT | FINALLY)* negation;
 negation: NEG* prop;
-prop: PROP | LPAR ltl RPAR;
+prop: PROP | VARIABLE | LPAR ltl RPAR;
 
 // lexer rules
 LPAR  : '(';
@@ -21,7 +21,7 @@ FINALLY: 'F';
 UNTIL: 'U';
 CONJ: '&&';
 DISJ:  '||';
-PROP: 'TRUE'|'FALSE'|VARIABLE;
+PROP: 'TRUE'|'FALSE';
 VARIABLE: [a-z]+;
 
 WS: [ \n\t\r]+ -> skip;
