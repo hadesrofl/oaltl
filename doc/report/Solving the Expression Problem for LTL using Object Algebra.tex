@@ -43,55 +43,91 @@ Simon Thiessen%\orcidID{2222-3333-4444-5555}
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The expression problem, as described in \cite{wadler}, describes the problem of defining data types, which can be extended with new data types and new functions without recompiling existing code and retaining static type safety. This lead to some pattern, which handle the problem more or less well. In this paper we will discuss the use of object algebra instead of patterns like the interpreter or visitor pattern. We will use Linear Temporal Logic (LTL) \cite{pnueli} as an example to show how one can use object algebra to solve the expression problem. For this case we start with a given set of LTL expressions and an evaluation function. In the process we extend our LTL object algebra by a new data type and new function.
+The expression problem, as described in \cite{wadler98}, describes the problem of defining data types, which can be extended with new data types and new functions without recompiling existing code and retaining static type safety. To handle this problem new paradigms and patterns were developed. In this paper we will discuss the use of object algebra as an alternative to patterns like the interpreter or visitor pattern. Linear Temporal Logic (LTL) \cite{pnueli77} will be used as an example to show how one can use object algebra to solve the expression problem. Starting with a given set of LTL expressions and an evaluation function the LTL object algebra will be extended by a new data type and a new function.
 \keywords{expression problem, visitor pattern, interpreter pattern, object algebra}
 \end{abstract}
 %
 \section{Introduction} \label{sec:introduction}
-The expression problem was coined by Philip Wadler in \cite{wadler} and describes a problem, which can be used to benchmark the expressiveness of programming language by a question like "how much can your language express?". The expression problem therefore discusses strengths and weaknesses of programming languages and paradigms.
+The expression problem was coined by Philip Wadler in \cite{wadler98} and describes a problem, which can be used to benchmark the expressiveness of programming language by a question such as "how much can your language express?". The expression problem therefore discusses strengths and weaknesses of programming languages and paradigms.
 
-Philip Wadler presented in \cite{wadler} the goal to define data types that could be extended by new cases of data types and new functions, while retaining static type safety and without recompiling existing code.
+Philip Wadler presented in \cite{wadler98} the goal to define data types that could be extended by new cases of data types and new functions, while retaining static type safety and without recompiling existing code.
 
-There are different approaches to solve the expression problem, e.g. the visitor pattern and interpreter pattern, which will be introduced in \autoref{sec:approaches}. As with nearly everything each approach has it's two sides of a coin. 
+There are different approaches to solve the expression problem, e.g. the visitor pattern and interpreter pattern, which will be introduced in \autoref{sec:approaches}. As with nearly everything each approach has it's own two sides of a coin. 
 
-The expression problem itself can be part of different kind of practical problems one needs to solve. One can reduce string matching to regular expressions, which can be reduced to the expression problem. Therefore the interpreter pattern would suggest different classes for expression likes \emph{literal}, \emph{alternation} and \emph{repetition} as shown in \cite{GHJV}.
+The expression problem itself can be part of different kinds of practical problems one needs to solve. One can reduce string matching to regular expressions, which in turn can be reduced to the expression problem. Therefore the interpreter pattern would suggest different classes for expression such as \emph{literal}, \emph{alternation} and \emph{repetition} as shown in \cite{GHJV94}.
 
-In practical terms regular expression will mostly be modeled via a state machine and not with more or less complex expression classes. But one could easy come up with his or hers own grammar which needs to be interpreted to get the information it expresses, e.g. the commandos of RoboCups Soccer server\footnote{http://www.robocup.org/}.
+In practical terms regular expression will mostly be modeled via a state machine instead of the usually more complex expression classes. But one could easily come up with their own grammar which needs to be interpreted to get the information it expresses, e.g. the commands of RoboCups Soccer server\footnote{http://www.robocup.org/}.
 
-In \autoref{sec:approaches} we will give more insight about the visitor and interpreter patterns but also about object algebra. \autoref{sec:oa-ltl} will describe our approach using object algebra with the given set of LTL expressions and their extended types and functions. The paper ends in \autoref{sec:conclusion} with a conclusion about the strengths and weaknesses of object algebra in comparison to the visitor and interpreter pattern.
+In \autoref{sec:approaches} we will give more insight about the visitor and interpreter patterns as well as about object algebra. Our approach using using object algebra with a given set of LTL expressions and their extended types and functions will be described in \autoref{sec:oa-ltl}. The paper concludes in \autoref{sec:conclusion} about the strengths and weaknesses of object algebra in comparison to the visitor and interpreter pattern.
 
 \section{Approaches to the expression problem} \label{sec:approaches}
-In this section we will give a short overview how the patterns work for a comparison later on. We will start with the interpreter pattern in \autoref{ssec:interpreter}, move to the visitor pattern in \autoref{ssec:visitor} and finish this section with object algebra in \autoref{ssec:oa}.
+In this section we will give a short overview of how the patterns work for a comparison later on. We will start with the interpreter pattern in \autoref{ssec:interpreter}, move on to the visitor pattern in \autoref{ssec:visitor} and finish this section with object algebra in \autoref{ssec:oa}.
 
 \subsection{Interpreter Pattern} \label{ssec:interpreter}
-The interpreter pattern is used if a kind of problem occurs often enough. Instances of the problem will then be expressed in a simple language. The interpreter can then solve the problem by interpreting the sentences of the language.
+The interpreter pattern is used if a certain kind of problem occurs often enough. Instances of the problem will then be expressed in a simple language. The interpreter can then solve the problem by interpreting the sentences of the language.
 
-In object-oriented languages this can be done by writing classes which represent expressions of the language. \cite{GHJV} uses the language for regular expressions as an example.
+In object-oriented languages this can be done by writing classes which represent expressions of the language. \cite{GHJV94} uses the language for regular expressions as an example.
 
 Therefore every regular expression can be represented by its grammar in an abstract syntax tree (AST), which is made up of the instances of the expression classes. An example AST is shown in \autoref{fig:interpreter-pattern-ast}.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{img/Interpreter-Pattern-AST-Example}
-	\caption{Example in \cite{GHJV} for the AST of regular expressions using the interpreter pattern }
+	\caption{Example in \cite{GHJV94} for the AST of regular expressions using the interpreter pattern }
 	\label{fig:interpreter-pattern-ast}
 \end{figure} 
 
-Operations on these expression classes will be implemented in the class. So if we want to evaluate an expression each node evaluates itself with the defined operation.
+Operations will be implemented in the expression class. That means that if we want to evaluate an expression, each node of the AST evaluates itself with the defined operation.
 
-The following benefits and liabilities are described in \cite{GHJV}:
+The following benefits and liabilities are described in \cite{GHJV94}:
 
 \begin{description}
-	\item[It's easy to change and extend the grammer:] Using classes to represent grammar rules allows to use inheritance to extend the grammer. New data types will be derived from existing ones.
-	\item[Implementing the grammer is easy, too:] The nodes of the AST have similar implementation, which makes the implementation easy and repetitive This process can be automated with compiler or parser generators.
-	\item[Complex grammars are hard to maintain:] At least one class is defined for every expression. This means that complex grammars have many different classes, which needs to be maintained. Adding a new operation on these classes means you need to change every class accordingly.
+	\item[It's easy to change and extend the grammer:] Using classes to represent grammar rules allows the usage of inheritance to extend the grammar. New data types will be derived from existing ones.
+	
+	\item[Implementing the grammer is easy, too:] The nodes of the AST have similar functionalities, which makes the implementation easy and repetitive. This process can be automated with compiler or parser generators.
+	
+	\item[Complex grammars are hard to maintain:] At least one class is defined for every expression. This means that complex grammars have many different classes, which need to be maintained. Adding a new operation on these classes means one needs to change every class accordingly.
 \end{description}
 
-So as one can see the interpreter is great for grammars that are rather simple and don't change that much. Extending the grammer is easy, but adding new operations is not. Object algebra uses the terms \emph{data variation} and \emph{operations}. Using these terms one can briefly summarize the interpreter as a good way to handle data variations to a certain extend (not too complex grammars), but adding new operations to expressions can easily lead to many changes as every class of each expression needs an implementation of the new operation. This means that every expression class will be edited.
-
-
+So as one can see the interpreter is great for grammars that are rather simple and don't change much. Extending the grammer is easy, but adding new operations is not. Object algebra uses the terms \emph{data variation} and \emph{operations}. By using these terms one can briefly summarize the interpreter as a good way to handle data variations to a certain extend (not too complex grammars), but adding new operations to expressions can easily lead to many changes as every class of each expression needs an implementation of the new operation.
 
 \subsection{Visitor Pattern} \label{ssec:visitor}
+Unlike the interpreter pattern the intent of the visitor pattern is to represent operations, which will be performed on the nodes of an AST \cite{GHJV94}.
+
+With the visitor pattern, you define two class hierarchies. One is for the elements (or data variations) being operated on and one for the visitors that define operations on the elements. \cite{GHJV94}
+
+That means that if one wants to add a new operation there needs to be a new visitor class.
+
+Data variations need a function to \emph{accept} a visitor. This accept function is no more than a callback, which calls the \emph{visit} function of the visitor, where the parameter is the data variations object. With that information the visitor knows which kind of node of the AST he is visiting and which concrete function he needs to call to operate on this particular node. An example of this mechanic is shown in \autoref{fig:visitor-pattern}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/Visitor-Pattern-Example}
+	\caption{Example in \cite{GHJV94} for the visitor pattern}
+	\label{fig:visitor-pattern}
+\end{figure} 
+
+In \cite{GHJV94} are the following benefits and liabilities described for the visitor pattern:
+
+\begin{description}
+	\item[Visitor makes adding new operations easy:] New operations are defined as new visitor classes. This way you don't need to change each class of your object structure.
+	
+	\item[A visitor gathers related operations and separates unrelated ones:] As a visitor represents an operation over a node of the AST, the operations are separated in different visitor classes. That means that a basic principle, \emph{separation of concern}, is handled by design.
+	
+	\item[Adding new ConcreteElement classes is hard:] On the other hand, adding a new data variation is hard, as each visitor needs to handle this new data variation. Additionally the data variation needs to \emph{accept} each visitor as well. This is not suited for structures with frequently changes of data variations and their hierarchy.
+	
+	\item[Visiting across class hierarchies:] Iterators can't work across object structures with different types of elements, but the visitor can because of the visit functions, which accept certain types of data variations. These data variations don't have to be related through inheritance.
+	
+	\item[Accumulating state:] The state of a data variation is implicit passed as an argument to the visitor. Therefore there is no need for extra arguments or global variables in the visit function.
+	
+	\item[Breaking encapsulation:] The visitor pattern assume that the interface of the data variations lets the visitors do their job. This might lead to public functions that allow access to the internal state of a data variation.
+\end{description}
+
+The \emph{double-dispatch} mechanism (accept and visit function) mentioned in \cite{GHJV94} is required if the visitor is called by the data variation. Terence Parr showed in \cite{Parr09} how one can create an independent visitor, that distinguished the different nodes of an AST on the token type, which ANTLR uses in the grammar. Switching between the types allows the visitor to traverse the AST and identify each node.
+
+This external visitor has, according to \cite{Parr09}, some advantages as the method names can be named relevant to the task (instead of \emph{visit}) and there is no need for an interface for the visitor. The double-dispatch mechanism is also encapsulated in the visitor and not in the data variation and operation (which is here represented by the visitor). 
+
+
 \subsection{Object Algebra} \label{ssec:oa}
 \section{Object Algebra to the LTL Expression Problem} \label{sec:oa-ltl}
 \section{Conclusion} \label{sec:conclusion}
@@ -102,21 +138,27 @@ So as one can see the interpreter is great for grammars that are rather simple a
 \begin{thebibliography}{5}
 %
 
-\bibitem{wadler}
+\bibitem{wadler98}
 Wadler, P.:
 The Expression Problem.
 E-Mail Discussion (1998),
 \url{http://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt}
 
-\bibitem{pnueli}
+\bibitem{pnueli77}
 Pnueli, A.:
 The temporal logic of programs.
 In 18th Annual Symposium on Foundations of Computer Science, Providence, Rhode Island, USA, 31 October - 1 November 1977, pages 46-57, IEEE Computer Society, 1977
 
-\bibitem{GHJV}
+\bibitem{GHJV94}
 Gamma, E., Helm R., Johnson R. and Vlissides J.:
 Design Patterns: Elements of Reusable Object-Oriented Software.
 Addison-Wesley Professional Computing Series, Pearson Education, 1994
+
+\bibitem{Parr09}
+Parr, T.:
+Language Implementation Patterns: Create Your Own Domain-Specific and General Programming Languages.
+Pragmatic Bookshelf, 2009
+
 %\bibitem {clar:eke}
 %Clarke, F., Ekeland, I.:
 %Nonlinear oscillations and
