@@ -10,16 +10,32 @@ public class Run {
     public static void main(String[] args) throws Exception {
         Scanner scanny = new Scanner(System.in);
         String input;
+        String mode;
+
+        do {
+            System.out.println("Do you want Evaluation(e) or PrettyPrinting(p) of LTL-Formula?");
+            mode = scanny.nextLine();
+            mode = mode.toLowerCase();
+        } while (!mode.equals("p") && !mode.equals("e"));
+        
         do {
             System.out.println("Please enter your LTL Formular");
             input = scanny.nextLine();
             CharStream is = CharStreams.fromString(input);
 
             LTLLexer lexer = new LTLLexer(is);
-            PrintingObjectFactory factory = new PrintingObjectFactory();
+            
+            if (mode.equals("p")) {
+                PrintingObjectFactory factory = new PrintingObjectFactory();
+                System.out.println(buildObject(factory, lexer, -1).print());
+            } else {
+                EvalObjectFactory factory = new EvalObjectFactory();
+                System.out.println("Please enter your finite word:");
+                String word = scanny.nextLine();
+                System.out.println(buildObject(factory, lexer, -1).eval(word) ? "Formula satisfied" : "Formula not satisfied");
+            }
 
-            System.out.println(buildObject(factory, lexer, -1).print());
-
+            
             System.out.println("Quit program? (y/n)");
             input = scanny.nextLine();
         } while (input.toLowerCase().compareTo("y") != 0);
