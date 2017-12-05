@@ -9,6 +9,15 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{graphicx}
 \usepackage{listings}
+
+\hypersetup{
+	pdftitle = {Solving the Expression Problem for LTL using Object Algebra},
+	pdfsubject = {Software-Development},
+	pdfauthor = {Ren\'e Kremer, Hannes Kallwies, Simon Thiessen},
+	pdfkeywords = {expression problem, visitor pattern, interpreter pattern, object algebra}, 
+	colorlinks = false
+	}
+
 %
 \begin{document}
 %
@@ -45,6 +54,7 @@ Simon Thiessen%\orcidID{2222-3333-4444-5555}
 
 \begin{abstract}
 The expression problem, as described in \cite{wadler98}, describes the problem of defining data types, which can be extended with new data types and new functions without recompiling existing code and retaining static type safety. To handle this problem new paradigms and patterns were developed. In this paper we will discuss the use of object algebra as an alternative to patterns like the interpreter or visitor pattern. Linear Temporal Logic (LTL) \cite{pnueli77} will be used as an example to show how one can use object algebra to solve the expression problem. Starting with a given set of LTL expressions and an evaluation function the LTL object algebra will be extended by a new data type and a new function.
+
 \keywords{expression problem, visitor pattern, interpreter pattern, object algebra}
 \end{abstract}
 %
@@ -136,7 +146,7 @@ An example of these variants and operations is shown in \autoref{fig:oa-variants
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{img/OA-Variants-Operations}
+	\includegraphics[width=0.65\textwidth]{img/OA-Variants-Operations}
 	\caption{Example of data variants and operations used in object algebra}
 	\label{fig:oa-variants-operations}
 \end{figure} 
@@ -161,7 +171,8 @@ The set of LTL expressions includes \emph{conjunction, disjunction, negation, ne
 
 The operations on these expressions started with \emph{pretty printing} and were extended with the operation to \emph{evaluate} a LTL formula. The extensions of \emph{evaluate} also shows the extensibility of operations in terms of object algebra.
 
-\subsection{Implementation}
+\subsection{Implementation} \label{ssec:implementation}
+%TODO: change footnote links from develop branch to master
 The implementation uses an \emph{ObjectAlgebraFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/ObjectAlgebraFactory.java}{Github: ObjectAlgebraFactory.java}} to force the implementation of the data variants. So this abstract interface handles the data variants. The operations got an interface e.g. \emph{PrintingObject}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObject.java}{Github: PrintingObject.java}} for the pretty printing operation. This interface defines all needed functions with its parameters in an abstract way so that the concrete \emph{PrintingObjectFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObjectFactory.java}{Github: PrintingObjectFactory.java}} needs to implement these functions of the \emph{PrintingObject} for each data variant of the \emph{ObjectAlgebraFactory}. 
 
 %\begin{lstlisting}[caption=Implementation of the ObjectAlgebraFactory for the data variants, label=lst:object-algebra-factory]
@@ -204,7 +215,7 @@ The implementation uses an \emph{ObjectAlgebraFactory}\footnote{\href{https://gi
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{img/OA-LTL-Implementation}
-	\caption{Overview of the classes needed for the oa LTL implementation}
+	\caption{Overview of the classes needed for the LTL implementation using object algebra}
 	\label{fig:oa-ltl-implementation}
 \end{figure} 
 
@@ -214,6 +225,12 @@ In our example we ended up with adding the \emph{finally} variant in the \emph{O
 
 
 \section{Conclusion} \label{sec:conclusion}
+To summarize \autoref{ssec:interpreter} the interpreter pattern is good for adding new data variants but adding new operations is difficult. Also the operations are scattered as they are implemented by each node of the AST. So the big drawback is here the focus on implementing data variants and the operations being implemented in each node.
+
+As mentioned in \autoref{ssec:visitor} the visitor pattern focuses on operations and therefore is good for adding new operations. It is also possible to read the internal state of the node the visitor is processing and generate an operation state out of this information. On the other hand it is hard to add new variants. Another point is that it uses generally the \emph{double-dispatch} mechanism, which needs the variants to implement an \emph{accept} method additionally to the already needed \emph{visit} method. Also some functions or informations of the variants need to be public so that the visitor can do his work, which breaks the encapsulation of these element information.
+
+In \autoref{sec:oa-ltl} the general features and advantages of object algebra were shown. In terms of the expression problem it allows for a good (independent) extensibility while using the languages features to retain static type safety. The implementation in \autoref{ssec:implementation} showed how one can use object algebra and how difficult it is to add new operations and variants. Using simple object-oriented methods and polymorphism is enough to use the potential of object algebra. Adding new variants and operations is easily done via generic interfaces for data variants and factories for the operations. Maintenance in a shallow object hierarchie is easy as the generic interface and the factories are the core of this approach. Maintaining a deep hierarchie of extensions (for operations or variants) might be a bit harder, thoughm but this is a general problem of software-development as more files lead to a bigger code base to maintain. 
+
 
 %
 % ---- Bibliography ----
