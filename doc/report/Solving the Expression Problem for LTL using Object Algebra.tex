@@ -8,6 +8,7 @@
 \usepackage{makeidx}  % allows for indexgeneration
 \usepackage[hidelinks]{hyperref}
 \usepackage{graphicx}
+\usepackage{listings}
 %
 \begin{document}
 %
@@ -56,7 +57,7 @@ There are different approaches to solve the expression problem, e.g. the visitor
 
 The expression problem itself can be part of different kinds of practical problems one needs to solve. One can reduce string matching to regular expressions, which in turn can be reduced to the expression problem. Therefore the interpreter pattern would suggest different classes for expression such as \emph{literal}, \emph{alternation} and \emph{repetition} as shown in \cite{GHJV94}.
 
-In practical terms regular expression will mostly be modeled via a state machine instead of the usually more complex expression classes. But one could easily come up with their own grammar which needs to be interpreted to get the information it expresses, e.g. the commands of RoboCups Soccer server\footnote{http://www.robocup.org/}.
+In practical terms regular expression will mostly be modeled via a state machine instead of the usually more complex expression classes. But one could easily come up with their own grammar which needs to be interpreted to get the information it expresses, e.g. the commands of RoboCups Soccer server\footnote{\href{http://www.robocup.org/}{http://www.robocup.org/}}.
 
 In \autoref{sec:approaches} we will give more insight about the visitor and interpreter patterns as well as about object algebra. Our approach using using object algebra with a given set of LTL expressions and their extended types and functions will be described in \autoref{sec:oa-ltl}. The paper concludes in \autoref{sec:conclusion} about the strengths and weaknesses of object algebra in comparison to the visitor and interpreter pattern.
 
@@ -153,6 +154,65 @@ To summarize it:
 
 
 \section{Object Algebra to the LTL Expression Problem} \label{sec:oa-ltl}
+In this section we will show how one can handle the LTL expression problem using object algebra. The data variants and operations are the same as shown in \autoref{fig:oa-variants-operations}. The code is public on github\footnote{\href{https://github.com/hadesrofl/oaltl}{https://github.com/hadesrofl/oaltl}}.
+
+\subsection{LTL Set} \label{ssec:ltl-set}
+The set of LTL expressions includes \emph{conjunction, disjunction, negation, next, until, finally, atomic propositions}. To show the extensibility of object algebras \emph{finally} was added later in the development.
+
+The operations on these expressions started with \emph{pretty printing} and were extended with the operation to \emph{evaluate} a LTL formula. The extensions of \emph{evaluate} also shows the extensibility of operations in terms of object algebra.
+
+\subsection{Implementation}
+The implementation uses an \emph{ObjectAlgebraFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/ObjectAlgebraFactory.java}{Github: ObjectAlgebraFactory.java}} to force the implementation of the data variants. So this abstract interface handles the data variants. The operations got an interface e.g. \emph{PrintingObject}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObject.java}{Github: PrintingObject.java}} for the pretty printing operation. This interface defines all needed functions with its parameters in an abstract way so that the concrete \emph{PrintingObjectFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObjectFactory.java}{Github: PrintingObjectFactory.java}} needs to implement these functions of the \emph{PrintingObject} for each data variant of the \emph{ObjectAlgebraFactory}. 
+
+%\begin{lstlisting}[caption=Implementation of the ObjectAlgebraFactory for the data variants, label=lst:object-algebra-factory]
+%	package de.uzl.hsr.oaltl;
+%	
+%	public interface ObjectAlgebraFactory<T> {
+%		public T next(T child);
+%		public T fin(T child);
+%		public T until(T child1, T child2);
+%		public T neg(T child);
+%		public T and(T child1, T child2);
+%		public T or(T child1, T child2);
+%		public T val(boolean val);
+%		public T var(String varName);
+%	}
+%\end{lstlisting}
+
+%\begin{lstlisting}[caption=PrintingObject interface for the pretty printing operation, label=lst:printing-object]
+%	public interface PrintingObject {
+%		public String print();
+%	}
+%\end{lstlisting}
+
+%\begin{lstlisting}[caption=shorted version of the PrintingObjectFactory implementation, label=lst:printing-object-factory]
+%	package de.uzl.hsr.oaltl;
+%	public class PrintingObjectFactory implements 
+%		ObjectAlgebraFactory<PrintingObject> {
+%	
+%		public PrintingObject next(PrintingObject child) {
+%			return new PrintingObject() {
+%				public String print() {
+%					return "X(" + child.print() + ")";
+%				}
+%			};
+%		}
+%		...
+%	}
+%\end{lstlisting}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/OA-LTL-Implementation}
+	\caption{Overview of the classes needed for the oa LTL implementation}
+	\label{fig:oa-ltl-implementation}
+\end{figure} 
+
+One can see that using this structure of object-orientation encapsulates the concrete implementation of operation and data variants in a single factory for each operation. The interfaces ensure that all implementing classes are forced to implement the defined variants and also the operation. 
+
+In our example we ended up with adding the \emph{finally} variant in the \emph{ObjectAlgebraFactory}, but instead of this way to handle the extension, one could also just extend \emph{ObjectAlgebraFactory} by something like \emph{FinallyAlgebraFactory}. So the \emph{PrintingObjectFactory} for example would implement \emph{FinallyAlgebraFactory\textless PrintingObject\textgreater} and therefore all data variants defined in ObjectAlgebraFactory as well as the new \emph{finally} addition.
+
+
 \section{Conclusion} \label{sec:conclusion}
 
 %
