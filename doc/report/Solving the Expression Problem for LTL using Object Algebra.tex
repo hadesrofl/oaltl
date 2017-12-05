@@ -50,7 +50,7 @@ The expression problem, as described in \cite{wadler98}, describes the problem o
 \section{Introduction} \label{sec:introduction}
 The expression problem was coined by Philip Wadler in \cite{wadler98} and describes a problem, which can be used to benchmark the expressiveness of programming language by a question such as "how much can your language express?". The expression problem therefore discusses strengths and weaknesses of programming languages and paradigms.
 
-Philip Wadler presented in \cite{wadler98} the goal to define data types that could be extended by new cases of data types and new functions, while retaining static type safety and without recompiling existing code.
+Philip Wadler presented in \cite{wadler98} the goal to define data types that could be extended by new cases of data types and new functions, while retaining static type safety and without recompiling existing code. An extra requirement was added by \cite{Odersky05} and mentions the \emph{independent extensibility}, which means that it should be possible to combine independently developed extensions.
 
 There are different approaches to solve the expression problem, e.g. the visitor pattern and interpreter pattern, which will be introduced in \autoref{sec:approaches}. As with nearly everything each approach has it's own two sides of a coin. 
 
@@ -89,7 +89,7 @@ The following benefits and liabilities are described in \cite{GHJV94}:
 	\item[Complex grammars are hard to maintain:] At least one class is defined for every expression. This means that complex grammars have many different classes, which need to be maintained. Adding a new operation on these classes means one needs to change every class accordingly.
 \end{description}
 
-So as one can see the interpreter is great for grammars that are rather simple and don't change much. Extending the grammer is easy, but adding new operations is not. Object algebra uses the terms \emph{data variation} and \emph{operations}. By using these terms one can briefly summarize the interpreter as a good way to handle data variations to a certain extend (not too complex grammars), but adding new operations to expressions can easily lead to many changes as every class of each expression needs an implementation of the new operation.
+So as one can see the interpreter is great for grammars that are rather simple and don't change much. Extending the grammar is easy, but adding new operations is not. Object algebra uses the terms \emph{data variation} and \emph{operations}. By using these terms one can briefly summarize the interpreter as a good way to handle data variations to a certain extend (not too complex grammars), but adding new operations to expressions can easily lead to many changes as every class of each expression needs an implementation of the new operation.
 
 \subsection{Visitor Pattern} \label{ssec:visitor}
 Unlike the interpreter pattern the intent of the visitor pattern is to represent operations, which will be performed on the nodes of an AST \cite{GHJV94}.
@@ -129,6 +129,29 @@ This external visitor has, according to \cite{Parr09}, some advantages as the me
 
 
 \subsection{Object Algebra} \label{ssec:oa}
+Another solution to the \emph{expression problem} was proposed by \cite{Oliveira12} and uses \emph{object algebra}. Object algebra is based on \emph{algebraic signatures} \cite{Guttag78} and only uses \emph{constructors}, which return values of the abstract set. The abstract set in object algebras is based on \emph{data variants} and \emph{operations}. 
+
+An example of these variants and operations is shown in \autoref{fig:oa-variants-operations} for our LTL set. So every operation is available to every data variant. Implementing object algebras is done by creating a generic interface whose parameter is the abstract type \cite{Oliveira12}. The object algebra declares therefore generic factory interfaces for the variants and factories with the variant as type for implementing the operations. This will be shown more detailed in \autoref{sec:oa-ltl} with the example set of LTL.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/OA-Variants-Operations}
+	\caption{Example of data variants and operations used in object algebra}
+	\label{fig:oa-variants-operations}
+\end{figure} 
+
+Object Algebra is kind of familiar with the \emph{visitor} pattern as both decouple \emph{variants} and \emph{operations}. The visitor pattern has visitor classes for operations and the AST nodes as variants while object algebra uses generic factory interfaces to represent expressions (variants) and factories for operations. The main difference is that the visitor pattern focuses on operations. Object algebra uses the factory style to encapsulate the operations of an abstract expression. So to add new variants one needs to extend the interface of the generic factory, which is a natural and easy object-oriented approach. To add new operations one needs to implement this generic factory interface. So the methods used are simple object-oriented methods. This also allows for the usage of \emph{polymorphism}.
+
+To summarize it:
+
+\begin{description}
+	\item[Data type (data variant):] The data variant is a generic factory interface.
+	\item[Operation:] The operation is a factory implementation.
+	\item[Adding new variants: ] Adding new variants is done by extending the interface.
+	\item[Adding new operations:] Adding new operations is done by implementing the interface.
+\end{description}
+
+
 \section{Object Algebra to the LTL Expression Problem} \label{sec:oa-ltl}
 \section{Conclusion} \label{sec:conclusion}
 
@@ -143,6 +166,11 @@ Wadler, P.:
 The Expression Problem.
 E-Mail Discussion (1998),
 \url{http://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt}
+
+\bibitem{Odersky05}
+Odersky, M., Zenger, M.:
+Independently Extensible Solutions to the Expression Problem. 
+In FOOL'05
 
 \bibitem{pnueli77}
 Pnueli, A.:
@@ -159,34 +187,15 @@ Parr, T.:
 Language Implementation Patterns: Create Your Own Domain-Specific and General Programming Languages.
 Pragmatic Bookshelf, 2009
 
-%\bibitem {clar:eke}
-%Clarke, F., Ekeland, I.:
-%Nonlinear oscillations and
-%boundary-value problems for Hamiltonian systems.
-%Arch. Rat. Mech. Anal. 78, 315--333 (1982)
+\bibitem{Oliveira12}
+Oliveira, B., Cook, W.:
+Extensibility for the Masses - Practical Extensibility with Object Algebras.
+In ECOOP 2012 -- Object-Oriented Programming: 26th European Conference, Beijing, China, June 11-16, 2012, pages 2-27, Springer Berlin Heidelberg
 
-%\bibitem {clar:eke:2}
-%Clarke, F., Ekeland, I.:
-%Solutions p\'{e}riodiques, du
-%p\'{e}riode donn\'{e}e, des \'{e}quations hamiltoniennes.
-%Note CRAS Paris 287, 1013--1015 (1978)
-%
-%\bibitem {mich:tar}
-%Michalek, R., Tarantello, G.:
-%Subharmonic solutions with prescribed minimal
-%period for nonautonomous Hamiltonian systems.
-%J. Diff. Eq. 72, 28--55 (1988)
-%
-%\bibitem {tar}
-%Tarantello, G.:
-%Subharmonic solutions for Hamiltonian
-%systems via a $\bbbz_{p}$ pseudoindex theory.
-%Annali di Matematica Pura (to appear)
-%
-%\bibitem {rab}
-%Rabinowitz, P.:
-%On subharmonic solutions of a Hamiltonian system.
-%Comm. Pure Appl. Math. 33, 609--633 (1980)
+\bibitem{Guttag78}
+Guttag, J., Horning, J.:
+The algebraic specification of abstract data types.
+In Acta Informatica Vol. 10, pages 27-52, March 1978
 
 \end{thebibliography}
 \end{document}
