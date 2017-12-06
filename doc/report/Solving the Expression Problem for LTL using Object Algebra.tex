@@ -16,7 +16,7 @@
 	pdfauthor = {Ren\'e Kremer, Hannes Kallwies, Simon Thiessen},
 	pdfkeywords = {expression problem, visitor pattern, interpreter pattern, object algebra}, 
 	colorlinks = false
-	}
+}
 
 %
 \begin{document}
@@ -63,13 +63,13 @@ The expression problem was coined by Philip Wadler in \cite{wadler98} and descri
 
 Philip Wadler presented in \cite{wadler98} the goal to define data types that could be extended by new cases of data types and new functions, while retaining static type safety and without recompiling existing code. An extra requirement was added by \cite{Odersky05} and mentions the \emph{independent extensibility}, which means that it should be possible to combine independently developed extensions.
 
-There are different approaches to solve the expression problem, e.g. the visitor pattern and interpreter pattern, which will be introduced in \autoref{sec:approaches}. As with nearly everything each approach has it's own two sides of a coin. 
+There are different approaches to solve the expression problem, e.g. the visitor pattern and interpreter pattern, which will be introduced in \autoref{sec:approaches}. As with nearly everything each approach has it's advantages and disadvantages. 
 
-The expression problem itself can be part of different kinds of practical problems one needs to solve. One can reduce string matching to regular expressions, which in turn can be reduced to the expression problem. Therefore the interpreter pattern would suggest different classes for expression such as \emph{literal}, \emph{alternation} and \emph{repetition} as shown in \cite{GHJV94}.
+The expression problem itself can be part of different kinds of practical problems one needs to solve, e.g. the string matching with regular expressions. In that particular case the interpreter pattern would suggest different classes for expression such as \emph{literal}, \emph{alternation} and \emph{repetition} as shown in \cite{GHJV94}.
 
-In practical terms regular expression will mostly be modeled via a state machine instead of the usually more complex expression classes. But one could easily come up with their own grammar which needs to be interpreted to get the information it expresses, e.g. the commands of RoboCups Soccer server\footnote{\href{http://www.robocup.org/}{http://www.robocup.org/}}.
+In practical terms regular expression will mostly be modeled via a state machine instead of the usually more complex expression classes. But one could easily come up with their own grammar which needs to be interpreted to get the information it expresses, e.g. the commands of RoboCups 2D Soccer server\footnote{\href{http://www.robocup.org/}{http://www.robocup.org/}}.
 
-In \autoref{sec:approaches} we will give more insight about the visitor and interpreter patterns as well as about object algebra. Our approach using using object algebra with a given set of LTL expressions and their extended types and functions will be described in \autoref{sec:oa-ltl}. The paper concludes in \autoref{sec:conclusion} about the strengths and weaknesses of object algebra in comparison to the visitor and interpreter pattern.
+In \autoref{sec:approaches} we will give more insight about the visitor and interpreter patterns as well as object algebra. Our approach using object algebra with a given set of LTL expressions and their extended types and functions will be described in \autoref{sec:oa-ltl}. The conclusion in \autoref{sec:conclusion} compares object algebra and its strengths and weaknesses to the visitor and interpreter pattern.
 
 \section{Approaches to the expression problem} \label{sec:approaches}
 In this section we will give a short overview of how the patterns work for a comparison later on. We will start with the interpreter pattern in \autoref{ssec:interpreter}, move on to the visitor pattern in \autoref{ssec:visitor} and finish this section with object algebra in \autoref{ssec:oa}.
@@ -109,7 +109,7 @@ With the visitor pattern, you define two class hierarchies. One is for the eleme
 
 That means that if one wants to add a new operation there needs to be a new visitor class.
 
-Data variations need a function to \emph{accept} a visitor. This accept function is no more than a callback, which calls the \emph{visit} function of the visitor, where the parameter is the data variations object. With that information the visitor knows which kind of node of the AST he is visiting and which concrete function he needs to call to operate on this particular node. An example of this mechanic is shown in \autoref{fig:visitor-pattern}.
+Data variations need a function to \emph{accept} a visitor. This accept function is no more than a callback, which calls the \emph{visit} function of the visitor, where the parameter is the data variations object. With that information the visitor knows which kind of node of the AST he is visiting and which exact function he needs to call to operate on this particular node. An example of this mechanic is shown in \autoref{fig:visitor-pattern}.
 
 \begin{figure}[h]
 	\centering
@@ -121,17 +121,17 @@ Data variations need a function to \emph{accept} a visitor. This accept function
 In \cite{GHJV94} are the following benefits and liabilities described for the visitor pattern:
 
 \begin{description}
-	\item[Visitor makes adding new operations easy:] New operations are defined as new visitor classes. This way you don't need to change each class of your object structure.
+	\item[Visitor makes adding new operations easy:] New operations are defined as new visitor classes. This way one doesn't need to change each class of your object structure.
 	
-	\item[A visitor gathers related operations and separates unrelated ones:] As a visitor represents an operation over a node of the AST, the operations are separated in different visitor classes. That means that a basic principle, \emph{separation of concern}, is handled by design.
+	\item[A visitor gathers related operations and separates unrelated ones:] As a visitor represents an operation over a node of the AST, the operations are separated in different visitor classes. That means that the basic \emph{separation of concern} principle is handled by design.
 	
-	\item[Adding new ConcreteElement classes is hard:] On the other hand, adding a new data variation is hard, as each visitor needs to handle this new data variation. Additionally the data variation needs to \emph{accept} each visitor as well. This is not suited for structures with frequently changes of data variations and their hierarchy.
+	\item[Adding new ConcreteElement classes is hard:] On the other hand, adding a new data variation is hard, as each visitor needs to handle this new data variation. Additionally the data variation needs to \emph{accept} each visitor as well. This is not suited for structures with frequent changes of data variations and their hierarchy.
 	
-	\item[Visiting across class hierarchies:] Iterators can't work across object structures with different types of elements, but the visitor can because of the visit functions, which accept certain types of data variations. These data variations don't have to be related through inheritance.
+	\item[Visiting across class hierarchies:] Iterators can't work across object structures with different types of elements. The visitor however can because of the visit functions, which accept certain types of data variations. These data variations don't have to be related through inheritance.
 	
-	\item[Accumulating state:] The state of a data variation is implicit passed as an argument to the visitor. Therefore there is no need for extra arguments or global variables in the visit function.
+	\item[Accumulating state:] The state of a data variation is implicitly passed as an argument to the visitor. Therefore there is no need for extra arguments or global variables in the visit function.
 	
-	\item[Breaking encapsulation:] The visitor pattern assume that the interface of the data variations lets the visitors do their job. This might lead to public functions that allow access to the internal state of a data variation.
+	\item[Breaking encapsulation:] The visitor pattern assumes that the interface of the data variations lets the visitors do their job. This might lead to public functions that allow access to the internal state of a data variation.
 \end{description}
 
 The \emph{double-dispatch} mechanism (accept and visit function) mentioned in \cite{GHJV94} is required if the visitor is called by the data variation. Terence Parr showed in \cite{Parr09} how one can create an independent visitor, that distinguished the different nodes of an AST on the token type, which ANTLR uses in the grammar. Switching between the types allows the visitor to traverse the AST and identify each node.
@@ -142,7 +142,7 @@ This external visitor has, according to \cite{Parr09}, some advantages as the me
 \subsection{Object Algebra} \label{ssec:oa}
 Another solution to the \emph{expression problem} was proposed by \cite{Oliveira12} and uses \emph{object algebra}. Object algebra is based on \emph{algebraic signatures} \cite{Guttag78} and only uses \emph{constructors}, which return values of the abstract set. The abstract set in object algebras is based on \emph{data variants} and \emph{operations}. 
 
-An example of these variants and operations is shown in \autoref{fig:oa-variants-operations} for our LTL set. So every operation is available to every data variant. Implementing object algebras is done by creating a generic interface whose parameter is the abstract type \cite{Oliveira12}. The object algebra declares therefore generic factory interfaces for the variants and factories with the variant as type for implementing the operations. This will be shown more detailed in \autoref{sec:oa-ltl} with the example set of LTL.
+An example of these variants and operations is shown in \autoref{fig:oa-variants-operations} for our LTL set. So every operation is available to every data variant. Implementing object algebras is done by creating a generic interface whose parameter is the abstract type \cite{Oliveira12}. The object algebra therefore declares generic factory interfaces for the variants and factories with the variant as type for implementing the operations. This will be shown more detailed in \autoref{sec:oa-ltl} with the example set of LTL.
 
 \begin{figure}[h]
 	\centering
@@ -151,7 +151,7 @@ An example of these variants and operations is shown in \autoref{fig:oa-variants
 	\label{fig:oa-variants-operations}
 \end{figure} 
 
-Object Algebra is kind of familiar with the \emph{visitor} pattern as both decouple \emph{variants} and \emph{operations}. The visitor pattern has visitor classes for operations and the AST nodes as variants while object algebra uses generic factory interfaces to represent expressions (variants) and factories for operations. The main difference is that the visitor pattern focuses on operations. Object algebra uses the factory style to encapsulate the operations of an abstract expression. So to add new variants one needs to extend the interface of the generic factory, which is a natural and easy object-oriented approach. To add new operations one needs to implement this generic factory interface. So the methods used are simple object-oriented methods. This also allows for the usage of \emph{polymorphism}.
+Object Algebra is similar to the \emph{visitor} pattern as both decouple \emph{variants} and \emph{operations}. The visitor pattern has visitor classes for operations and the AST nodes as variants while object algebra uses generic factory interfaces to represent expressions (variants) and factories for operations. The main difference is that the visitor pattern focuses on operations. Object algebra uses the factory style to encapsulate the operations of an abstract expression. So to add new variants one needs to extend the interface of the generic factory, which is a natural and easy object-oriented approach. To add new operations one needs to implement this generic factory interface. So the methods used are simple object-oriented methods. This also allows for the usage of \emph{polymorphism}.
 
 To summarize it:
 
@@ -173,7 +173,7 @@ The operations on these expressions started with \emph{pretty printing} and were
 
 \subsection{Implementation} \label{ssec:implementation}
 %TODO: change footnote links from develop branch to master
-The implementation uses an \emph{ObjectAlgebraFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/ObjectAlgebraFactory.java}{Github: ObjectAlgebraFactory.java}} to force the implementation of the data variants. So this abstract interface handles the data variants. The operations got an interface e.g. \emph{PrintingObject}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObject.java}{Github: PrintingObject.java}} for the pretty printing operation. This interface defines all needed functions with its parameters in an abstract way so that the concrete \emph{PrintingObjectFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObjectFactory.java}{Github: PrintingObjectFactory.java}} needs to implement these functions of the \emph{PrintingObject} for each data variant of the \emph{ObjectAlgebraFactory}. 
+The implementation uses an \emph{ObjectAlgebraFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/ObjectAlgebraFactory.java}{Github: ObjectAlgebraFactory.java}} to force the implementation of the data variants. So this abstract interface handles the data variants. The operations got an interface e.g. \emph{PrintingObject}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObject.java}{Github: PrintingObject.java}} for the pretty printing operation. This interface defines all needed functions with its parameters in an abstract way so that the \emph{PrintingObjectFactory}\footnote{\href{https://github.com/hadesrofl/oaltl/blob/develop/src/main/java/de/uzl/hsr/oaltl/PrintingObjectFactory.java}{Github: PrintingObjectFactory.java}} needs to implement these functions of the \emph{PrintingObject} for each data variant of the \emph{ObjectAlgebraFactory}. 
 
 %\begin{lstlisting}[caption=Implementation of the ObjectAlgebraFactory for the data variants, label=lst:object-algebra-factory]
 %	package de.uzl.hsr.oaltl;
@@ -219,18 +219,17 @@ The implementation uses an \emph{ObjectAlgebraFactory}\footnote{\href{https://gi
 	\label{fig:oa-ltl-implementation}
 \end{figure} 
 
-One can see that using this structure of object-orientation encapsulates the concrete implementation of operation and data variants in a single factory for each operation. The interfaces ensure that all implementing classes are forced to implement the defined variants and also the operation. 
+One can see that using this structure of object-orientation encapsulates the exact implementation of operation and data variants in a single factory for each operation. The interfaces ensure that all implementing classes are forced to implement the defined variants and also the operation. 
 
 In our example we ended up with adding the \emph{finally} variant in the \emph{ObjectAlgebraFactory}, but instead of this way to handle the extension, one could also just extend \emph{ObjectAlgebraFactory} by something like \emph{FinallyAlgebraFactory}. So the \emph{PrintingObjectFactory} for example would implement \emph{FinallyAlgebraFactory\textless PrintingObject\textgreater} and therefore all data variants defined in ObjectAlgebraFactory as well as the new \emph{finally} addition.
 
 
 \section{Conclusion} \label{sec:conclusion}
-To summarize \autoref{ssec:interpreter} the interpreter pattern is good for adding new data variants but adding new operations is difficult. Also the operations are scattered as they are implemented by each node of the AST. So the big drawback is here the focus on implementing data variants and the operations being implemented in each node.
+To summarize \autoref{ssec:interpreter}, the interpreter pattern is good for adding new data variants but adding new operations is difficult. Also the operations are scattered as they are implemented by each node of the AST. So the big drawback is the focus on implementing data variants and the operations being implemented in each node.
 
-As mentioned in \autoref{ssec:visitor} the visitor pattern focuses on operations and therefore is good for adding new operations. It is also possible to read the internal state of the node the visitor is processing and generate an operation state out of this information. On the other hand it is hard to add new variants. Another point is that it uses generally the \emph{double-dispatch} mechanism, which needs the variants to implement an \emph{accept} method additionally to the already needed \emph{visit} method. Also some functions or informations of the variants need to be public so that the visitor can do his work, which breaks the encapsulation of these element information.
+As mentioned in \autoref{ssec:visitor} the visitor pattern focuses on operations and therefore is good for adding new operations. It is also possible to read the internal state of the node the visitor is processing and generate an operation state out of this information. On the other hand it is hard to add new variants. Another point is that it generally uses the \emph{double-dispatch} mechanism, which needs the variants to implement an \emph{accept} method additionally to the already needed \emph{visit} method. Also some functions or informations of the variants need to be public so that the visitor can do his work, which breaks the encapsulation of these element information.
 
-In \autoref{sec:oa-ltl} the general features and advantages of object algebra were shown. In terms of the expression problem it allows for a good (independent) extensibility while using the languages features to retain static type safety. The implementation in \autoref{ssec:implementation} showed how one can use object algebra and how difficult it is to add new operations and variants. Using simple object-oriented methods and polymorphism is enough to use the potential of object algebra. Adding new variants and operations is easily done via generic interfaces for data variants and factories for the operations. Maintenance in a shallow object hierarchie is easy as the generic interface and the factories are the core of this approach. Maintaining a deep hierarchie of extensions (for operations or variants) might be a bit harder, thoughm but this is a general problem of software-development as more files lead to a bigger code base to maintain. 
-
+In \autoref{sec:oa-ltl} the general features and advantages of object algebra were shown. In terms of the expression problem it allows for a good (independent) extensibility while using the languages features to retain static type safety. The implementation in \autoref{ssec:implementation} showed how one can use object algebra and how difficult it is to add new operations and variants. Using simple object-oriented methods and polymorphism is enough to use the potential of object algebra. Adding new variants and operations is easily done via generic interfaces for data variants and factories for the operations. Maintenance in a shallow object hierarchy is easy as the generic interface and the factories are the core of this approach. Maintaining a deep hierarchy of extensions (for operations or variants) might be a bit harder, though this is a general problem of software-development as more files lead to a bigger code base to maintain. 
 
 %
 % ---- Bibliography ----
