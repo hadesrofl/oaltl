@@ -18,7 +18,7 @@ public class Run {
         } while (!mode.equals("p") && !mode.equals("e"));
         
         do {
-            System.out.println("Please enter your LTL Formular");
+            System.out.println("Please enter your LTL Formula");
             input = scanny.nextLine();
             CharStream is = CharStreams.fromString(input);
 
