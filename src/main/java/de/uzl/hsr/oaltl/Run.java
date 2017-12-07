@@ -1,13 +1,12 @@
 package de.uzl.hsr.oaltl;
 
-import de.uzl.hsr.oaltl.util.TokenIdentifier;
 import org.antlr.v4.runtime.*;
 import de.uzl.hsr.oaltl.grammar.*;
 
 import java.util.Scanner;
 
 public class Run {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Scanner scanny = new Scanner(System.in);
         String input;
         String mode;
@@ -42,7 +41,7 @@ public class Run {
         scanny.close();
     }
 
-    public static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
+    private static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
 
         T parsedObject = null;
         Token t = lexer.nextToken();

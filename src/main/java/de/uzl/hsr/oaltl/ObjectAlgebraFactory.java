@@ -1,12 +1,12 @@
 package de.uzl.hsr.oaltl;
 
 public interface ObjectAlgebraFactory<T> {
-	public T next(T child);
-	public T fin(T child);
-	public T until(T child1, T child2);
-	public T neg(T child);
-	public T and(T child1, T child2);
-	public T or(T child1, T child2);
-	public T val(boolean val);
-	public T var(String varName);
+	T next(T child);
+	T fin(T child);
+	T until(T child1, T child2);
+	T neg(T child);
+	T and(T child1, T child2);
+	T or(T child1, T child2);
+	T val(boolean val);
+	T var(String varName);
 }
