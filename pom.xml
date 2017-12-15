@@ -7,6 +7,20 @@
     <groupId>de.hsr</groupId>
     <artifactId>OALTL</artifactId>
     <version>0.5</version>
+    <developers>
+        <developer>
+            <name>Rene Kremer</name>
+            <email>rene.kremer@student.uni-luebeck.de</email>
+        </developer>
+        <developer>
+            <name>Hannes Kallwies</name>
+            <email>hannes.kallwies@student.uni-luebeck.de</email>
+        </developer>
+        <developer>
+            <name>Simon Thiessen</name>
+            <email>simon.thiessen@student.uni-luebeck.de</email>
+        </developer>
+    </developers>
     <build>
         <plugins>
             <plugin>
