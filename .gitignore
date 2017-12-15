@@ -4,7 +4,7 @@
 *.class
 doc/*/*.aux
 doc/*/*.log
-doc/*/*.pdf
+!doc/*/*.pdf
 doc/*/*.gz
 
 doc/*/*.out
