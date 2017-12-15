@@ -10,7 +10,7 @@
 Running 
 
 ```bash
-mvn generate-sources
+mvn generate-sources clean
 ```
 
 will generate the necessary java files out of the antlr4 grammar.

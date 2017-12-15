@@ -6,7 +6,7 @@
 
     <groupId>de.hsr</groupId>
     <artifactId>OALTL</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.5</version>
     <build>
         <plugins>
             <plugin>
@@ -16,7 +16,7 @@
                 <configuration>
                     <sourceDirectory>src/main/java/de/uzl/hsr/oaltl/grammar</sourceDirectory>
                     <outputDirectory>src/main/java/de/uzl/hsr/oaltl/grammar</outputDirectory>
-                    <visitor>true</visitor>
+                    <listener>false</listener>
                 </configuration>
                 <executions>
                     <execution>
