@@ -41,7 +41,7 @@ public class Run {
         scanny.close();
     }
 
-    private static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
+    public static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
 
         T parsedObject = null;
         Token t = lexer.nextToken();
