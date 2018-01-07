@@ -28,8 +28,10 @@ public class Run {
         } while (!mode.equals("p") && !mode.equals("e"));
 
         do {
-            System.out.println("Please enter your LTL Formula");
-            input = scanny.nextLine();
+            do {
+                System.out.println("Please enter your LTL Formula");
+                input = scanny.nextLine();
+            } while (input.equals(""));
             CharStream is = CharStreams.fromString(input);
 
             LTLLexer lexer = new LTLLexer(is);
