@@ -2,4 +2,10 @@
 
 *.iml
 *.class
+doc/*/*.aux
+doc/*/*.log
+!doc/*/*.pdf
+doc/*/*.gz
 
+doc/*/*.out
+target

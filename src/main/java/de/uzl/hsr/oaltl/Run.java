@@ -5,7 +5,17 @@ import de.uzl.hsr.oaltl.grammar.*;
 
 import java.util.Scanner;
 
+/**
+ * This class starts the whole application
+ *
+ * @author Rene Kremer, Hannes Kallwies
+ */
 public class Run {
+    /**
+     * Main Method
+     *
+     * @param args not used
+     */
     public static void main(String[] args) {
         Scanner scanny = new Scanner(System.in);
         String input;
@@ -16,14 +26,16 @@ public class Run {
             mode = scanny.nextLine();
             mode = mode.toLowerCase();
         } while (!mode.equals("p") && !mode.equals("e"));
-        
+
         do {
-            System.out.println("Please enter your LTL Formula");
-            input = scanny.nextLine();
+            do {
+                System.out.println("Please enter your LTL Formula");
+                input = scanny.nextLine();
+            } while (input.equals(""));
             CharStream is = CharStreams.fromString(input);
 
             LTLLexer lexer = new LTLLexer(is);
-            
+
             if (mode.equals("p")) {
                 PrintingObjectFactory factory = new PrintingObjectFactory();
                 System.out.println(buildObject(factory, lexer, -1).print());
@@ -34,14 +46,25 @@ public class Run {
                 System.out.println(buildObject(factory, lexer, -1).eval(word) ? "Formula satisfied" : "Formula not satisfied");
             }
 
-            
+
             System.out.println("Quit program? (y/n)");
             input = scanny.nextLine();
         } while (input.toLowerCase().compareTo("y") != 0);
         scanny.close();
     }
 
-    private static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
+    /**
+     * Builds an object according to generic Type <em>T</em> and its {@link ObjectAlgebraFactory}, a given lexer and level
+     * <p>
+     * <em>Hint: Public as it is used by the test cases!</em>
+     *
+     * @param fac   is the factory for object <em>T</em> (operation)
+     * @param lexer is the LTL Lexer
+     * @param level used for determining operator precedence
+     * @param <T>   is the object for the operation on the data variants, e.g. {@link PrintingObject} or {@link EvalObject}
+     * @return an object of <em>T</em> containing the LTL formula
+     */
+    public static <T> T buildObject(ObjectAlgebraFactory<T> fac, LTLLexer lexer, int level) {
 
         T parsedObject = null;
         Token t = lexer.nextToken();
