@@ -36,3 +36,5 @@ mvn package
 ```
 
 The runnable jar will be in the directory *target/* as OALTL-X.X.X.jar
+
+Alternatively check out the releases on github.
