@@ -35,4 +35,4 @@ To package the application into a runnable jar run maven with
 mvn package
 ```
 
-The runnable jar will be in the directory *target/*
+The runnable jar will be in the directory *target/* as OALTL-X.X.X.jar
